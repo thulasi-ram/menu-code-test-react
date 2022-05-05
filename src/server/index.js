@@ -1,4 +1,6 @@
 const express = require('express');
+var cors = require('cors')
+
 const { buildSchema } = require('graphql');
 const { graphqlHTTP } = require('express-graphql');
 
@@ -7,6 +9,8 @@ const gqlSchema = require('./static/gql-schema');
 
 const port = 3000;
 const app = express();
+
+app.use(cors())
 
 app.get('/api/v1/menu', (req, res) => {
     res.json(menu);
