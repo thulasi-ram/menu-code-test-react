@@ -11,15 +11,17 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.js?$/,
+                // using babel-loader for ts files: https://stackoverflow.com/a/68281449/6323666
+                test: /\.(ts|js)x?$/,
                 exclude: /node_modules/,
                 use: [
                     {
                         loader: 'babel-loader',
                         options: {
                             presets: [
-                                '@babel/preset-env',
-                                '@babel/preset-react',
+                                '@babel/preset-env', 
+                                '@babel/preset-react', 
+                                '@babel/preset-typescript'
                             ].map(require.resolve),
                         },
                     },
@@ -32,4 +34,7 @@ module.exports = {
         filename: 'bundle.js',
     },
     plugins: [htmlPlugin],
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'],
+    },
 };
