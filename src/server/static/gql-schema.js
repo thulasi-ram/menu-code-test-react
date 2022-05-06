@@ -41,4 +41,13 @@ module.exports = `
         """
         menu: Menu!
     }
+
+    type Mutation {
+        """
+        The query to update the restaurant menu.
+        """
+        addStarter(name: String!, price: Float!): ID
+        addMain(name: String!, price: Float!): ID
+        addDessert(name: String!, price: Float!): ID
+    }
 `;
