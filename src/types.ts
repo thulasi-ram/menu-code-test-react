@@ -22,4 +22,17 @@ interface IOrder {
     validate(): [boolean, string];
 }
 
-export type { IDishType, Dish, IOrder, Menu, Diner, StarterDish, MainDish, DessertDish };
+
+class Order implements IOrder {
+  addItem(dn: Diner, ds: Dish): void {
+      throw new Error('Method not implemented.');
+  }
+  amount(): number | null {
+      throw new Error('Method not implemented.');
+  }
+  validate(): [boolean, string] {
+      throw new Error('Method not implemented.');
+  }
+}
+
+export type { IDishType, Dish, IOrder, Menu, Diner, StarterDish, MainDish, DessertDish, Order };
