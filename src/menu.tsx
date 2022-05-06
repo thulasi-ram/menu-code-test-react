@@ -28,8 +28,8 @@ const addStarterMutation = `mutation AddStarter($name: String!, $price: Float!) 
     addStarter(name: $name, price: $price)
 }`;
 
-export function MenuComponent() {
-    const { loading, error, data, refetch } = useQuery(getMenuQuery, {refetchAfterMutations: [addStarterMutation]});
+export function MenuComponent({ selectedDish, setDish }: { selectedDish: any; setDish: any }) {
+    const { loading, error, data, refetch } = useQuery(getMenuQuery, { refetchAfterMutations: [addStarterMutation] });
 
     if (loading) return <p>Loading menu from graphql...</p>;
     if (error) return <p>Error loading menu from graphql!</p>;
@@ -38,13 +38,17 @@ export function MenuComponent() {
 
     return (
         <>
-            <div>HI {JSON.stringify(menu)}</div>
-            <AddStarterComponent name={""} price={0}></AddStarterComponent>
+            <div>Dishes</div>
+
+            {menu.dishes.map((d) => {
+                return <button key={d.id} onClick={() => setDish(d)}>{d.name}</button>;
+            })}
+            {/* <AddStarterComponent name={""} price={0}></AddStarterComponent> */}
         </>
     );
 }
 
-function AddStarterComponent({name, price}: {name: string, price: number}): JSX.Element {
+function AddStarterComponent({ name, price }: { name: string; price: number }): JSX.Element {
     const [updateStarter] = useMutation(addStarterMutation);
     const [newName, setNewName] = useState(name);
     const [newPrice, setNewPrice] = useState(price);
@@ -55,7 +59,9 @@ function AddStarterComponent({name, price}: {name: string, price: number}): JSX.
         <div>
             <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} />
             <input type="number" value={newPrice} onChange={(e) => setNewPrice(parseFloat(e.target.value))} />
-            <button onClick={() => updateStarter({ variables: { name: newName, price: newPrice } })}>Add Starter</button>
+            <button onClick={() => updateStarter({ variables: { name: newName, price: newPrice } })}>
+                Add Starter
+            </button>
         </div>
     );
 }
