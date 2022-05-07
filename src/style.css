@@ -1,3 +1,15 @@
 button.is_active {
     color: red;
 }
+
+.addOrRemoveDish {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.dish {
+    display: block;
+    border: solid 1px black;
+    width: 20%;
+}
