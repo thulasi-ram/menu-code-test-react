@@ -28,7 +28,7 @@ const addStarterMutation = `mutation AddStarter($name: String!, $price: Float!) 
     addStarter(name: $name, price: $price)
 }`;
 
-export function MenuComponent({ selectedDish, setDish }: { selectedDish: any; setDish: any }) {
+export function MenuComponent({addOrRemoveDishComponent }: { addOrRemoveDishComponent: any }) {
     const { loading, error, data, refetch } = useQuery(getMenuQuery, { refetchAfterMutations: [addStarterMutation] });
 
     if (loading) return <p>Loading menu from graphql...</p>;
@@ -41,7 +41,15 @@ export function MenuComponent({ selectedDish, setDish }: { selectedDish: any; se
             <div>Dishes</div>
 
             {menu.dishes.map((d) => {
-                return <button key={d.id} onClick={() => setDish(d)}>{d.name}</button>;
+                return (
+                    <div
+                    className='dish'
+                        key={d.id}
+                    >
+                        <div>{d.name} - {d.price}</div>
+                        {addOrRemoveDishComponent(d)}
+                    </div>
+                );
             })}
             {/* <AddStarterComponent name={""} price={0}></AddStarterComponent> */}
         </>

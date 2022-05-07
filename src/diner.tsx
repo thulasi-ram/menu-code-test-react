@@ -14,7 +14,15 @@ export function DinersSelectComponent({
         <>
             <div> Diner Select </div>
             {diners.map((d) => {
-                return <button key={d.id} onClick={() => setDiner(d)}>{d.name}</button>;
+                return (
+                    <button
+                        key={d.id}
+                        onClick={() => setDiner(d)}
+                        className={selectedDiner?.id === d.id ? 'is_active' : ''}
+                    >
+                        {d.name}
+                    </button>
+                );
             })}
         </>
     );

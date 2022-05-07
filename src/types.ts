@@ -21,32 +21,63 @@ type Diner = {
 
 interface IOrder {
     addItem(dn: Diner, ds: Dish): void;
-    amount(): number | null;
+    removeItem(dn: Diner, ds: Dish): void;
+    amount(): number | undefined;
     validate(): [boolean, string];
+    dinerDishQuantity(diner: Diner | undefined, dish: Dish): number;
 }
 
 class Order implements IOrder {
+    dinerDishes: Map<String, Map<IDishType, number>>;
 
-    dinerItems: Map<String, Dish[]>
+    constructor() {
+        this.dinerDishes = new Map<String, Map<IDishType, number>>();
+    }
 
-    constructor () {
-        this.dinerItems = new Map<String, Dish[]>();
+    addItem(dn: Diner, ds: Dish): void {
+        let dishes = this.dinerDishes.get(dn.id);
+        if (!dishes) {
+            dishes = new Map<IDishType, number>();
+        }
+        let quantity = dishes.get(ds) || 0;
+        dishes.set(ds, quantity + 1);
+        this.dinerDishes.set(dn.id, dishes);
+    }
+
+    removeItem(dn: Diner, ds: Dish): void {
+        let dishes = this.dinerDishes.get(dn.id);
+        if (!dishes) {
+            dishes = new Map<IDishType, number>();
+        }
+        let quantity = dishes.get(ds) || 0;
+        if (quantity <= 0) {
+            return;
+        }
+        dishes.set(ds, quantity - 1);
+        this.dinerDishes.set(dn.id, dishes);
+    }
+
+    amount(): number | undefined {
+        let sum: number | undefined = undefined;
+
+        this.dinerDishes.forEach((dishes, _) => {
+            dishes.forEach((quantity, dish) => {
+                sum = sum || 0;
+                sum += dish.price * quantity;
+            });
+        });
+
+        return sum;
     }
     
-    addItem(dn: Diner, ds: Dish): void {
-        if (this.dinerItems.has(dn.id)) {
-            let dishes = this.dinerItems.get(dn.id)
-            dishes?.push(ds)
-            this.dinerItems.set(dn.id, dishes!)
-        } else {
-            this.dinerItems.set(dn.id, [ds])
-        }
-    }
-    amount(): number | null {
-        throw new Error('Method not implemented.');
-    }
     validate(): [boolean, string] {
         throw new Error('Method not implemented.');
+    }
+    dinerDishQuantity(diner: Diner | undefined, dish: Dish): number {
+        if (!diner) {
+            return 0;
+        }
+        return this.dinerDishes.get(diner.id)?.get(dish) || 0;
     }
 }
 
