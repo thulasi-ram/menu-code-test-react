@@ -13,7 +13,6 @@ export function TableOrder({ menu, diners, inventory }: { menu: Menu; diners: Di
 
     const [orderState, setOrderState] = useReducer(addOrRemoveFromOrder, {
         order: new Order(),
-        diner: selectedDiner,
         inventory: inventory,
     });
 
@@ -42,23 +41,23 @@ export function TableOrder({ menu, diners, inventory }: { menu: Menu; diners: Di
 // function must always be outside
 // https://stackoverflow.com/a/54894698/6323666
 function addOrRemoveFromOrder(
-    state: { order: IOrder; diner: Diner, inventory: IInventory },
-    payload: { dish: Dish; action: AlterOrderAction}
+    state: { order: IOrder; inventory: IInventory },
+    payload: { diner: Diner; dish: Dish; action: AlterOrderAction }
 ) {
     switch (payload.action) {
         case AlterOrderAction.ADD: {
-            state.order.addItem(state.diner, payload.dish);
+            state.order.addItem(payload.diner, payload.dish);
             state.inventory.depleteItem(payload.dish);
             break;
         }
         case AlterOrderAction.REM: {
-            state.order.removeItem(state.diner, payload.dish);
+            state.order.removeItem(payload.diner, payload.dish);
             state.inventory.stockItem(payload.dish);
             break;
         }
     }
 
-    return { order: state.order, diner: state.diner, inventory: state.inventory };
+    return { order: state.order, inventory: state.inventory };
 }
 
 const addOrRemoveDishComponent = (order: IOrder, diner: Diner, inventory: IInventory, addOrRemoveCallback: any) => {
@@ -68,7 +67,7 @@ const addOrRemoveDishComponent = (order: IOrder, diner: Diner, inventory: IInven
         return (
             <div className="addOrRemoveDish">
                 <button
-                    onClick={() => addOrRemoveCallback({ dish: dish, action: AlterOrderAction.REM })}
+                    onClick={() => addOrRemoveCallback({ diner: diner, dish: dish, action: AlterOrderAction.REM })}
                     disabled={orderAvailable < 1}
                 >
                     remove
@@ -77,7 +76,7 @@ const addOrRemoveDishComponent = (order: IOrder, diner: Diner, inventory: IInven
                 <div>quantity: {orderAvailable}</div>
 
                 <button
-                    onClick={() => addOrRemoveCallback({ dish: dish, action: AlterOrderAction.ADD })}
+                    onClick={() => addOrRemoveCallback({ diner: diner, dish: dish, action: AlterOrderAction.ADD })}
                     disabled={!stockAvailable}
                 >
                     add
