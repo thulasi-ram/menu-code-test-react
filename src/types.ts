@@ -39,11 +39,10 @@ interface IOrder {
     removeItem(dn: Diner, ds: Dish): void;
     amount(): number | undefined;
     errors(): string[];
-    dinerDishQuantity(diner: Diner | undefined, dish: Dish): number;
     dishesAndQuantities(diner: Diner | undefined): Map<Dish, number>
 }
 
-type orderValidator = (order: IOrder) => string | undefined;
+type orderValidator = (order: IOrder) => string[];
 
 export {DishTypes}
 export type { Dish, IOrder, Menu, Diner, StarterDish, MainDish, DessertDish, IInventory };

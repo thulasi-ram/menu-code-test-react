@@ -58,7 +58,7 @@ function addOrRemoveFromOrder(
 const addOrRemoveDishComponent = (order: IOrder, diner: Diner, inventory: IInventory, addOrRemoveCallback: any) => {
     return (dish: Dish) => {
         const stockAvailable = inventory.has(dish);
-        const orderAvailable = order.dinerDishQuantity(diner, dish);
+        const orderAvailable = order.dishesAndQuantities(diner).get(dish) || 0;
         return (
             <div className="addOrRemoveDish">
                 <button

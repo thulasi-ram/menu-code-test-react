@@ -1,9 +1,9 @@
 import React from 'react';
-import { Diner, Dish, IOrder } from './types';
+import { Diner, Dish, DishTypes, IOrder } from './types';
 
 class Order implements IOrder {
     diners: Diner[];
-    validators: ((order: IOrder) => string | undefined)[];
+    validators: ((order: IOrder) => string[])[];
     dinerDishes: Map<String, Map<Dish, number>>;
 
     constructor(diners: Diner[]) {
@@ -13,6 +13,7 @@ class Order implements IOrder {
             validateAtleastTwoCourses,
             validateAtleastOneMainCourse,
             validateEitherPrawnCockTailOrSalmonFillet,
+            validateNoMoreThanOneCourseType,
         ];
     }
 
@@ -32,8 +33,8 @@ class Order implements IOrder {
             dishes = new Map<Dish, number>();
         }
         let quantity = dishes.get(ds) || 0;
-        if (quantity <= 0) {
-            return;
+        if (quantity < 0) {
+            quantity = 0;
         }
         dishes.set(ds, quantity - 1);
         this.dinerDishes.set(dn.id, dishes);
@@ -55,19 +56,10 @@ class Order implements IOrder {
     errors(): string[] {
         let messages: string[] = [];
         this.validators.forEach((validator) => {
-            let message = validator(this);
-            if (message !== undefined) {
-                messages.push(message);
-            }
+            let vmessages = validator(this);
+            messages.push(...vmessages);
         });
         return messages;
-    }
-
-    dinerDishQuantity(diner: Diner | undefined, dish: Dish): number {
-        if (!diner) {
-            return 0;
-        }
-        return this.dinerDishes.get(diner.id)?.get(dish) || 0;
     }
 
     dishesAndQuantities(diner: Diner | undefined): Map<Dish, number> {
@@ -89,33 +81,83 @@ function OrderSummaryComponent({ order }: { order: IOrder }) {
         <>
             <div>Order Summary</div>
             {orderText}
-            {order.errors()}
+            {order.errors().map((err, idx) => (
+                <p key={`${idx}-err`}>{err}</p>
+            ))}
         </>
     );
 }
 
-function validateAtleastTwoCourses(order: IOrder) {
-    for(var i = 0; i < order.diners.length; i++) {
-        let diner = order.diners[i]; 
+function validateAtleastTwoCourses(order: IOrder): string[] {
+    let errors: string[] = [];
+    order.diners.forEach((diner) => {
         let courses = new Set();
         let dishesAndQuantities = order.dishesAndQuantities(diner);
-        dishesAndQuantities.forEach((_, dish) => {
-            courses.add(dish.type)
+        dishesAndQuantities.forEach((quantity, dish) => {
+            if (quantity) {
+                courses.add(dish.type);
+            }
         });
         if (courses.size < 2) {
-            console.log("test")
-            return `must have atleast 2 courses`
+            errors.push(`${diner.name} must have atleast 2 courses`);
         }
-    }
-    return undefined;
+    });
+    return errors;
 }
 
-function validateAtleastOneMainCourse(order: IOrder) {
-    return undefined;
+function validateAtleastOneMainCourse(order: IOrder): string[] {
+    let errors: string[] = [];
+
+    order.diners.forEach((diner) => {
+        let courses = new Set();
+        let dishesAndQuantities = order.dishesAndQuantities(diner);
+        dishesAndQuantities.forEach((quantity, dish) => {
+            if (quantity) {
+                courses.add(dish.type);
+            }
+        });
+        if (!courses.has(DishTypes.Main)) {
+            errors.push(`${diner.name} must have atleast one main course`);
+        }
+    });
+    return errors;
 }
 
-function validateEitherPrawnCockTailOrSalmonFillet(order: IOrder) {
-    return undefined;
+function validateEitherPrawnCockTailOrSalmonFillet(order: IOrder): string[] {
+    let errors: string[] = [];
+
+    order.diners.forEach((diner) => {
+        let dishNames = new Set();
+        let dishesAndQuantities = order.dishesAndQuantities(diner);
+        dishesAndQuantities.forEach((quantity, dish) => {
+            if (quantity) {
+                dishNames.add(dish.name);
+            }
+        });
+        if (dishNames.has('Salmon fillet') && dishNames.has('Prawn cocktail')) {
+            errors.push(`${diner.name} cannot haves Prawn cocktail and Salmon fillet in the same meal`);
+        }
+    });
+    return errors;
+}
+
+function validateNoMoreThanOneCourseType(order: IOrder): string[] {
+    let errors: string[] = [];
+
+    order.diners.forEach((diner) => {
+        let dishTypes = new Set();
+        let dishesAndQuantities = order.dishesAndQuantities(diner);
+        dishesAndQuantities.forEach((quantity, dish) => {
+            console.log(dishTypes, quantity, dish);
+            if (quantity) {
+                if (dishTypes.has(dish.type)) {
+                    errors.push(`${diner.name} cannot haves more than one same course type`);
+                }
+                dishTypes.add(dish.type);
+            }
+        });
+    });
+    return errors;
 }
 
 export { Order, OrderSummaryComponent };
