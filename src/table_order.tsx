@@ -1,21 +1,21 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useReducer, useState } from 'react';
 import { DinersSelectComponent } from './diner';
 import { MenuComponent } from './menu';
-import { Diner, Dish, IOrder, Order } from './types';
+import { Diner, Dish, IInventory, IOrder, Menu, Order } from './types';
 
 enum AlterOrderAction {
     ADD = 'add',
     REM = 'remove',
 }
 
-export function TableOrder() {
-    let diners: Diner[] = [
-        { id: 'DN1', name: 'Diner1' },
-        { id: 'DN2', name: 'Diner2' },
-    ];
-
+export function TableOrder({ menu, diners, inventory }: { menu: Menu; diners: Diner[]; inventory: IInventory }) {
     const [selectedDiner, setDiner] = useState<Diner>(diners[0]);
-    const [orderState, setOrderState] = useReducer(addOrRemoveFromOrder, { order: new Order(), diner: selectedDiner });
+
+    const [orderState, setOrderState] = useReducer(addOrRemoveFromOrder, {
+        order: new Order(),
+        diner: selectedDiner,
+        inventory: inventory,
+    });
 
     return (
         <>
@@ -25,7 +25,13 @@ export function TableOrder() {
                 setDiner={setDiner}
             ></DinersSelectComponent>
             <MenuComponent
-                addOrRemoveDishComponent={addOrRemoveDishComponent(orderState.order, selectedDiner, setOrderState)}
+                menu={menu}
+                addOrRemoveDishComponent={addOrRemoveDishComponent(
+                    orderState.order,
+                    selectedDiner,
+                    inventory,
+                    setOrderState
+                )}
             ></MenuComponent>
             <p>-</p>
             <OrderSummaryComponent order={orderState.order}></OrderSummaryComponent>
@@ -36,31 +42,49 @@ export function TableOrder() {
 // function must always be outside
 // https://stackoverflow.com/a/54894698/6323666
 function addOrRemoveFromOrder(
-    state: { order: IOrder; diner: Diner },
-    payload: { dish: Dish; action: AlterOrderAction }
+    state: { order: IOrder; diner: Diner, inventory: IInventory },
+    payload: { dish: Dish; action: AlterOrderAction}
 ) {
-    console.log('action', state, payload);
     switch (payload.action) {
         case AlterOrderAction.ADD: {
             state.order.addItem(state.diner, payload.dish);
+            state.inventory.depleteItem(payload.dish);
             break;
         }
         case AlterOrderAction.REM: {
             state.order.removeItem(state.diner, payload.dish);
+            state.inventory.stockItem(payload.dish);
             break;
         }
     }
-    return { order: state.order, diner: state.diner };
+
+    return { order: state.order, diner: state.diner, inventory: state.inventory };
 }
 
-const addOrRemoveDishComponent = (order: IOrder, diner: Diner | undefined, addOrRemoveCallback: any) => {
-    return (dish: Dish) => (
-        <div className="addOrRemoveDish">
-            <button onClick={() => addOrRemoveCallback({ dish: dish, action: AlterOrderAction.REM })}>remove</button>
-            <div>quantity: {order.dinerDishQuantity(diner, dish)}</div>
-            <button onClick={() => addOrRemoveCallback({ dish: dish, action: AlterOrderAction.ADD })}>add</button>
-        </div>
-    );
+const addOrRemoveDishComponent = (order: IOrder, diner: Diner, inventory: IInventory, addOrRemoveCallback: any) => {
+    return (dish: Dish) => {
+        const stockAvailable = inventory.has(dish);
+        const orderAvailable = order.dinerDishQuantity(diner, dish);
+        return (
+            <div className="addOrRemoveDish">
+                <button
+                    onClick={() => addOrRemoveCallback({ dish: dish, action: AlterOrderAction.REM })}
+                    disabled={orderAvailable < 1}
+                >
+                    remove
+                </button>
+
+                <div>quantity: {orderAvailable}</div>
+
+                <button
+                    onClick={() => addOrRemoveCallback({ dish: dish, action: AlterOrderAction.ADD })}
+                    disabled={!stockAvailable}
+                >
+                    add
+                </button>
+            </div>
+        );
+    };
 };
 
 function OrderSummaryComponent({ order }: { order: IOrder }) {

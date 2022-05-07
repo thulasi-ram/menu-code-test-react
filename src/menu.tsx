@@ -2,7 +2,7 @@ import { useMutation, useQuery } from 'graphql-hooks';
 import React, { useState } from 'react';
 import { DessertDish, Dish, MainDish, Menu, StarterDish } from './types';
 
-export const getMenuQuery = `
+const getMenuQuery = `
   query {
     menu {
       starters {
@@ -28,30 +28,21 @@ const addStarterMutation = `mutation AddStarter($name: String!, $price: Float!) 
     addStarter(name: $name, price: $price)
 }`;
 
-export function MenuComponent({addOrRemoveDishComponent }: { addOrRemoveDishComponent: any }) {
-    const { loading, error, data, refetch } = useQuery(getMenuQuery, { refetchAfterMutations: [addStarterMutation] });
-
-    if (loading) return <p>Loading menu from graphql...</p>;
-    if (error) return <p>Error loading menu from graphql!</p>;
-
-    let menu: Menu = makeMenuFromQuery(data);
-
+function MenuComponent({ menu, addOrRemoveDishComponent }: { menu: Menu; addOrRemoveDishComponent: any }) {
     return (
         <>
             <div>Dishes</div>
-
             {menu.dishes.map((d) => {
                 return (
-                    <div
-                    className='dish'
-                        key={d.id}
-                    >
-                        <div>{d.name} - {d.price}</div>
+                    <div className="dish" key={d.id}>
+                        <div>
+                            {d.name} - {d.price}
+                        </div>
                         {addOrRemoveDishComponent(d)}
                     </div>
                 );
             })}
-            {/* <AddStarterComponent name={""} price={0}></AddStarterComponent> */}
+            <AddStarterComponent name={""} price={0}></AddStarterComponent>
         </>
     );
 }
@@ -61,7 +52,7 @@ function AddStarterComponent({ name, price }: { name: string; price: number }): 
     const [newName, setNewName] = useState(name);
     const [newPrice, setNewPrice] = useState(price);
 
-    console.log(name, price);
+    // console.log(name, price);
 
     return (
         <div>
@@ -93,3 +84,5 @@ function makeMenuFromQuery(data: any): Menu {
 
     return { dishes: dishes };
 }
+
+export { MenuComponent, makeMenuFromQuery, getMenuQuery, addStarterMutation };

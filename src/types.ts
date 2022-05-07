@@ -19,6 +19,13 @@ type Diner = {
     name: string;
 };
 
+interface IInventory {
+    stockItem(dish: Dish): void;
+    depleteItem(dish: Dish): void;
+    has(dish: Dish): boolean;
+    quantity(dish: Dish): number;
+}
+
 interface IOrder {
     addItem(dn: Diner, ds: Dish): void;
     removeItem(dn: Diner, ds: Dish): void;
@@ -69,7 +76,7 @@ class Order implements IOrder {
 
         return sum;
     }
-    
+
     validate(): [boolean, string] {
         throw new Error('Method not implemented.');
     }
@@ -82,4 +89,4 @@ class Order implements IOrder {
 }
 
 export { Order };
-export type { IDishType, Dish, IOrder, Menu, Diner, StarterDish, MainDish, DessertDish };
+export type { IDishType, Dish, IOrder, Menu, Diner, StarterDish, MainDish, DessertDish, IInventory };
