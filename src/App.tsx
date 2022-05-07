@@ -1,6 +1,8 @@
 import { ClientContext, GraphQLClient } from 'graphql-hooks';
 import React from 'react';
 import { TableOrder } from './table_order';
+import "./style.css";
+
 
 const client = new GraphQLClient({
     url: 'http://localhost:3000/graphql',
