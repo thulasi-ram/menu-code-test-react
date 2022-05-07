@@ -28,7 +28,7 @@ const addStarterMutation = `mutation AddStarter($name: String!, $price: Float!) 
     addStarter(name: $name, price: $price)
 }`;
 
-function MenuComponent({ menu, addOrRemoveDishComponent }: { menu: Menu; addOrRemoveDishComponent: any }) {
+function MenuComponent({ menu, addOrRemoveButtonGroup }: { menu: Menu; addOrRemoveButtonGroup: any }) {
     return (
         <>
             <div>Dishes</div>
@@ -38,7 +38,7 @@ function MenuComponent({ menu, addOrRemoveDishComponent }: { menu: Menu; addOrRe
                         <div>
                             {d.name} - {d.price}
                         </div>
-                        {addOrRemoveDishComponent(d)}
+                        {addOrRemoveButtonGroup(d)}
                     </div>
                 );
             })}
@@ -51,8 +51,6 @@ function AddStarterComponent({ name, price }: { name: string; price: number }): 
     const [updateStarter] = useMutation(addStarterMutation);
     const [newName, setNewName] = useState(name);
     const [newPrice, setNewPrice] = useState(price);
-
-    // console.log(name, price);
 
     return (
         <div>

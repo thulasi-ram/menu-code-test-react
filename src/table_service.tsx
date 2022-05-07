@@ -1,20 +1,23 @@
 import React, { useReducer, useState } from 'react';
 import { DinersSelectComponent } from './diner';
 import { MenuComponent } from './menu';
-import { Diner, Dish, IInventory, IOrder, Menu, Order } from './types';
+import { Order, OrderSummaryComponent } from './order';
+import { Diner, Dish, IInventory, IOrder, Menu } from './types';
 
 enum AlterOrderAction {
     ADD = 'add',
     REM = 'remove',
 }
 
-export function TableOrder({ menu, diners, inventory }: { menu: Menu; diners: Diner[]; inventory: IInventory }) {
+export function TableService({ menu, diners, inventory }: { menu: Menu; diners: Diner[]; inventory: IInventory }) {
     const [selectedDiner, setDiner] = useState<Diner>(diners[0]);
 
     const [orderState, setOrderState] = useReducer(addOrRemoveFromOrder, {
         order: new Order(),
         inventory: inventory,
     });
+
+    const addOrRemoveButtonGroup = addOrRemoveDishComponent(orderState.order, selectedDiner, inventory, setOrderState);
 
     return (
         <>
@@ -23,16 +26,7 @@ export function TableOrder({ menu, diners, inventory }: { menu: Menu; diners: Di
                 selectedDiner={selectedDiner}
                 setDiner={setDiner}
             ></DinersSelectComponent>
-            <MenuComponent
-                menu={menu}
-                addOrRemoveDishComponent={addOrRemoveDishComponent(
-                    orderState.order,
-                    selectedDiner,
-                    inventory,
-                    setOrderState
-                )}
-            ></MenuComponent>
-            <p>-</p>
+            <MenuComponent menu={menu} addOrRemoveButtonGroup={addOrRemoveButtonGroup}></MenuComponent>
             <OrderSummaryComponent order={orderState.order}></OrderSummaryComponent>
         </>
     );
@@ -60,6 +54,7 @@ function addOrRemoveFromOrder(
     return { order: state.order, inventory: state.inventory };
 }
 
+// Embeddable button group in each dish
 const addOrRemoveDishComponent = (order: IOrder, diner: Diner, inventory: IInventory, addOrRemoveCallback: any) => {
     return (dish: Dish) => {
         const stockAvailable = inventory.has(dish);
@@ -85,12 +80,3 @@ const addOrRemoveDishComponent = (order: IOrder, diner: Diner, inventory: IInven
         );
     };
 };
-
-function OrderSummaryComponent({ order }: { order: IOrder }) {
-    return (
-        <>
-            <div>Order Summary</div>
-            {order.amount()}
-        </>
-    );
-}

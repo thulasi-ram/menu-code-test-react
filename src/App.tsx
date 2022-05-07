@@ -1,6 +1,6 @@
 import { ClientContext, GraphQLClient, useQuery } from 'graphql-hooks';
 import React from 'react';
-import { TableOrder } from './table_order';
+import { TableService } from './table_service';
 import './style.css';
 import { addStarterMutation, getMenuQuery, makeMenuFromQuery } from './menu';
 import { Diner, IInventory, Menu } from './types';
@@ -10,6 +10,8 @@ const client = new GraphQLClient({
     url: 'http://localhost:3000/graphql',
 });
 
+
+// orchestrator to load needed dependencies
 function Container() {
 
     const { loading, error, data } = useQuery(getMenuQuery, { refetchAfterMutations: [addStarterMutation] });
@@ -23,7 +25,7 @@ function Container() {
         { id: 'DN2', name: 'Diner2' },
     ];
     
-    return <TableOrder menu={menu} diners={diners} inventory={inventory}></TableOrder>;
+    return <TableService menu={menu} diners={diners} inventory={inventory}></TableService>;
 }
 
 export default function App() {
