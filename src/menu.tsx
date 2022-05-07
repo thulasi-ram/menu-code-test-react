@@ -36,7 +36,7 @@ function MenuComponent({ menu, addOrRemoveButtonGroup }: { menu: Menu; addOrRemo
                 return (
                     <div className="dish" key={d.id}>
                         <div>
-                            {d.name} - {d.price}
+                            {d.name} - {d.price} - {d.type}
                         </div>
                         {addOrRemoveButtonGroup(d)}
                     </div>
