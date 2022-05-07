@@ -1,12 +1,18 @@
-interface IDishType {
+enum DishTypes {
+    Starter = 'starter',
+    Main = 'main',
+    Dessert = 'dessert'
+}
+interface IBaseDish {
     id: string;
     name: string;
     price: number;
+    type: DishTypes
 }
 
-type StarterDish = IDishType;
-type MainDish = IDishType;
-type DessertDish = IDishType;
+type StarterDish = IBaseDish & {type: DishTypes.Starter};
+type MainDish = IBaseDish & {type: DishTypes.Main};
+type DessertDish = IBaseDish & {type: DishTypes.Dessert};
 
 type Dish = StarterDish | MainDish | DessertDish;
 
@@ -27,14 +33,17 @@ interface IInventory {
 }
 
 interface IOrder {
+    diners: Diner[]
     validators: orderValidator[];
     addItem(dn: Diner, ds: Dish): void;
     removeItem(dn: Diner, ds: Dish): void;
     amount(): number | undefined;
     errors(): string[];
     dinerDishQuantity(diner: Diner | undefined, dish: Dish): number;
+    dishesAndQuantities(diner: Diner | undefined): Map<Dish, number>
 }
 
 type orderValidator = (order: IOrder) => string | undefined;
 
-export type { IDishType, Dish, IOrder, Menu, Diner, StarterDish, MainDish, DessertDish, IInventory };
+export {DishTypes}
+export type { Dish, IOrder, Menu, Diner, StarterDish, MainDish, DessertDish, IInventory };

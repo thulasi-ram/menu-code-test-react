@@ -13,7 +13,7 @@ export function TableService({ menu, diners, inventory }: { menu: Menu; diners: 
     const [selectedDiner, setDiner] = useState<Diner>(diners[0]);
 
     const [orderState, setOrderState] = useReducer(addOrRemoveFromOrder, {
-        order: new Order(),
+        order: new Order(diners),
         inventory: inventory,
     });
 

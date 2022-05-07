@@ -1,12 +1,14 @@
 import React from 'react';
-import { Diner, Dish, IDishType, IOrder } from './types';
+import { Diner, Dish, IOrder } from './types';
 
 class Order implements IOrder {
+    diners: Diner[];
     validators: ((order: IOrder) => string | undefined)[];
-    dinerDishes: Map<String, Map<IDishType, number>>;
+    dinerDishes: Map<String, Map<Dish, number>>;
 
-    constructor() {
-        this.dinerDishes = new Map<String, Map<IDishType, number>>();
+    constructor(diners: Diner[]) {
+        this.diners = diners;
+        this.dinerDishes = new Map<String, Map<Dish, number>>();
         this.validators = [
             validateAtleastTwoCourses,
             validateAtleastOneMainCourse,
@@ -17,7 +19,7 @@ class Order implements IOrder {
     addItem(dn: Diner, ds: Dish): void {
         let dishes = this.dinerDishes.get(dn.id);
         if (!dishes) {
-            dishes = new Map<IDishType, number>();
+            dishes = new Map<Dish, number>();
         }
         let quantity = dishes.get(ds) || 0;
         dishes.set(ds, quantity + 1);
@@ -27,7 +29,7 @@ class Order implements IOrder {
     removeItem(dn: Diner, ds: Dish): void {
         let dishes = this.dinerDishes.get(dn.id);
         if (!dishes) {
-            dishes = new Map<IDishType, number>();
+            dishes = new Map<Dish, number>();
         }
         let quantity = dishes.get(ds) || 0;
         if (quantity <= 0) {
@@ -67,6 +69,17 @@ class Order implements IOrder {
         }
         return this.dinerDishes.get(diner.id)?.get(dish) || 0;
     }
+
+    dishesAndQuantities(diner: Diner | undefined): Map<Dish, number> {
+        if (!diner) {
+            return new Map<Dish, number>();
+        }
+        let dishes = this.dinerDishes.get(diner.id);
+        if (!dishes) {
+            return new Map<Dish, number>();
+        }
+        return dishes;
+    }
 }
 
 function OrderSummaryComponent({ order }: { order: IOrder }) {
@@ -82,11 +95,23 @@ function OrderSummaryComponent({ order }: { order: IOrder }) {
 }
 
 function validateAtleastTwoCourses(order: IOrder) {
-    return "test error";
+    for(var i = 0; i < order.diners.length; i++) {
+        let diner = order.diners[i]; 
+        let courses = new Set();
+        let dishesAndQuantities = order.dishesAndQuantities(diner);
+        dishesAndQuantities.forEach((_, dish) => {
+            courses.add(dish.type)
+        });
+        if (courses.size < 2) {
+            console.log("test")
+            return `must have atleast 2 courses`
+        }
+    }
+    return undefined;
 }
 
 function validateAtleastOneMainCourse(order: IOrder) {
-    return "test error1";
+    return undefined;
 }
 
 function validateEitherPrawnCockTailOrSalmonFillet(order: IOrder) {

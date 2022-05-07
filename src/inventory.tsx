@@ -1,4 +1,4 @@
-import { Dish, IDishType, IInventory } from './types';
+import { Dish, IInventory } from './types';
 
 function getRandomInt(min: number, max: number) {
     min = Math.ceil(min);
@@ -20,12 +20,12 @@ class LimitedCheeseCakeInventory implements IInventory {
             }
         });
     }
-    stockItem(dish: IDishType): void {
+    stockItem(dish: Dish): void {
         let quantity = this.quantity(dish)
         this.inventory.set(dish.id, quantity + 1)
     }
 
-    depleteItem(dish: IDishType): void {
+    depleteItem(dish: Dish): void {
         let quantity = this.quantity(dish)
         if (quantity < 1) {
             throw "cannot deplete quantity"
@@ -33,10 +33,10 @@ class LimitedCheeseCakeInventory implements IInventory {
         this.inventory.set(dish.id, quantity - 1)
     }
 
-    has(dish: IDishType): boolean {
+    has(dish: Dish): boolean {
         return this.quantity(dish) ? true : false;
     }
-    quantity(dish: IDishType): number {
+    quantity(dish: Dish): number {
         return this.inventory.get(dish.id) || 0;
     }
 }

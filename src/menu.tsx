@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from 'graphql-hooks';
 import React, { useState } from 'react';
-import { DessertDish, Dish, MainDish, Menu, StarterDish } from './types';
+import { DessertDish, Dish, DishTypes, MainDish, Menu, StarterDish } from './types';
 
 const getMenuQuery = `
   query {
@@ -68,15 +68,15 @@ function makeMenuFromQuery(data: any): Menu {
     let menuData = data.menu;
 
     menuData.starters.forEach((value: any) => {
-        let s: StarterDish = value;
+        let s: StarterDish =  {...value, type: DishTypes.Starter};
         dishes.push(s);
     });
     menuData.mains.forEach((value: any) => {
-        let s: MainDish = value;
+        let s: MainDish =  {...value, type: DishTypes.Main};
         dishes.push(s);
     });
     menuData.desserts.forEach((value: any) => {
-        let s: DessertDish = value;
+        let s: DessertDish =  {...value, type: DishTypes.Dessert};
         dishes.push(s);
     });
 
