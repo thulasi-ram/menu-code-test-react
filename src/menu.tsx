@@ -42,7 +42,6 @@ function MenuComponent({ menu, addOrRemoveButtonGroup }: { menu: Menu; addOrRemo
                     </div>
                 );
             })}
-            <AddStarterComponent name={""} price={0}></AddStarterComponent>
         </>
     );
 }
@@ -83,4 +82,4 @@ function makeMenuFromQuery(data: any): Menu {
     return { dishes: dishes };
 }
 
-export { MenuComponent, makeMenuFromQuery, getMenuQuery, addStarterMutation };
+export { MenuComponent, makeMenuFromQuery, getMenuQuery, addStarterMutation, AddStarterComponent };
