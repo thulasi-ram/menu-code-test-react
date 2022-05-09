@@ -4,9 +4,10 @@
   "description": "A small scaffold application for building ot-menu coding challenge",
   "main": "index.js",
   "scripts": {
+    "build:tailwind": "npx tailwindcss -i src/style.css -o src/style.output.css --watch",
     "start-server": "node src/server/index.js",
     "start-app": "webpack-dev-server --mode development --open",
-    "start": "concurrently \"npm:start-server\" \"npm:start-app\""
+    "start": "concurrently \"npm:build:tailwind\" \"npm:start-server\" \"npm:start-app\""
   },
   "author": "OpenTable",
   "license": "ISC",
@@ -33,6 +34,7 @@
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.3.2",
     "style-loader": "^3.3.1",
+    "tailwindcss": "^3.0.24",
     "ts-loader": "^9.3.0",
     "typescript": "^4.6.4",
     "webpack": "^5.51.1",
