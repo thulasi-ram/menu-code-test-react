@@ -2,10 +2,11 @@ import { ClientContext, GraphQLClient, useQuery } from 'graphql-hooks';
 import React from 'react';
 import { TableService } from './table_service';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
-import './style.css';
+import './style.output.css';
 import { AddStarterComponent, addStarterMutation, getMenuQuery, makeMenuFromQuery } from './menu';
 import { Diner, IInventory, Menu } from './types';
 import { LimitedCheeseCakeInventory } from './inventory';
+import { Header } from './header';
 
 const client = new GraphQLClient({
     url: 'http://localhost:3000/graphql',
@@ -28,20 +29,21 @@ function MenuDisplay() {
 }
 
 function MenuAdmin() {
-    return <>
-            <AddStarterComponent name={""} price={0}></AddStarterComponent>
-    </>;
+    return (
+        <>
+            <AddStarterComponent name={''} price={0}></AddStarterComponent>
+        </>
+    );
 }
 export default function App() {
     return (
         <ClientContext.Provider value={client}>
             <BrowserRouter>
-                    <Link to="/">Home</Link>
-                    <Link to="admin">Admin</Link>
-                    <Routes>
-                        <Route path="/" caseSensitive={false} element={<MenuDisplay />} />
-                        <Route path="admin" caseSensitive={false} element={<MenuAdmin />} />
-                    </Routes>
+                <Header></Header>
+                <Routes>
+                    <Route path="/" caseSensitive={false} element={<MenuDisplay />} />
+                    <Route path="admin" caseSensitive={false} element={<MenuAdmin />} />
+                </Routes>
             </BrowserRouter>
         </ClientContext.Provider>
     );

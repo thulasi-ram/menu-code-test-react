@@ -20,15 +20,18 @@ export function TableService({ menu, diners, inventory }: { menu: Menu; diners: 
     const addOrRemoveButtonGroup = addOrRemoveDishComponent(orderState.order, selectedDiner, inventory, setOrderState);
 
     return (
-        <>
-            <DinersSelectComponent
-                diners={diners}
-                selectedDiner={selectedDiner}
-                setDiner={setDiner}
-            ></DinersSelectComponent>
+        <div className="container-sm mx-auto grid grid-cols-2 gap-4 justify-center">
+            <div className="col-span-2 place-self-center">
+                <DinersSelectComponent
+                    diners={diners}
+                    selectedDiner={selectedDiner}
+                    setDiner={setDiner}
+                ></DinersSelectComponent>
+            </div>
+
             <MenuComponent menu={menu} addOrRemoveButtonGroup={addOrRemoveButtonGroup}></MenuComponent>
             <OrderSummaryComponent order={orderState.order}></OrderSummaryComponent>
-        </>
+        </div>
     );
 }
 
@@ -60,21 +63,27 @@ const addOrRemoveDishComponent = (order: IOrder, diner: Diner, inventory: IInven
         const stockAvailable = inventory.has(dish);
         const orderAvailable = order.dishesAndQuantities(diner).get(dish) || 0;
         return (
-            <div className="addOrRemoveDish">
+            <div className="inline-flex items-center">
                 <button
+                    className="text-red-500 disabled:text-slate-500"
+                    type="button"
                     onClick={() => addOrRemoveCallback({ diner: diner, dish: dish, action: AlterOrderAction.REM })}
                     disabled={orderAvailable < 1}
                 >
-                    remove
+                    -
                 </button>
 
-                <div>quantity: {orderAvailable}</div>
+                <div className="flex py-1 w-10">
+                    <span className="mx-auto">{orderAvailable}</span>
+                </div>
 
                 <button
+                    className="text-green-500 disabled:text-slate-500"
+                    type="button"
                     onClick={() => addOrRemoveCallback({ diner: diner, dish: dish, action: AlterOrderAction.ADD })}
                     disabled={!stockAvailable}
                 >
-                    add
+                    +
                 </button>
             </div>
         );

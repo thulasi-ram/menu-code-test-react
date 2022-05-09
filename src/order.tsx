@@ -77,14 +77,17 @@ class Order implements IOrder {
 function OrderSummaryComponent({ order }: { order: IOrder }) {
     let orderAmount = order.amount();
     let orderText = orderAmount ? `$ ${orderAmount}` : '-';
+
     return (
-        <>
-            <div>Order Summary</div>
+        <section className="p-8 m-3 bg-white rounded-lg border shadow-md mr-32">
+            <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold leading-none text-gray-900 dark:text-white">Order Summary</h3>
+            </div>
             {orderText}
             {order.errors().map((err, idx) => (
                 <p key={`${idx}-err`}>{err}</p>
             ))}
-        </>
+        </section>
     );
 }
 
