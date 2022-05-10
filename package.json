@@ -6,7 +6,7 @@
   "scripts": {
     "build:tailwind": "npx tailwindcss -i src/style.css -o src/style.output.css --watch",
     "start-server": "node src/server/index.js",
-    "start-app": "webpack-dev-server --mode development --open",
+    "start-app": "webpack-dev-server --mode development --open --history-api-fallback",
     "start": "concurrently \"npm:build:tailwind\" \"npm:start-server\" \"npm:start-app\""
   },
   "author": "OpenTable",
@@ -27,6 +27,7 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.16.7",
+    "@tailwindcss/forms": "^0.5.1",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.2",
     "babel-loader": "^8.0.2",
