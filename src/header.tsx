@@ -95,8 +95,11 @@ function Header() {
                         ></path>{' '}
                     </svg>
                 </a>
-                <nav className="flex items-center space-x-1 text-sm font-medium text-gray-800">
-                    <Link to="admin" className="rounded bg-rose-600 px-3 py-2 text-white transition hover:bg-rose-700">
+                <nav className="flex items-center space-x-8 text-sm font-medium text-gray-800">
+                    <Link to="/" className="transition duration-150 hover:text-rose-700">
+                        Home
+                    </Link>
+                    <Link to="admin" className="transition duration-150 hover:text-rose-700">
                         Admin
                     </Link>
                 </nav>
