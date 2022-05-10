@@ -12,12 +12,13 @@ export function DinersSelectComponent({
 }) {
     return (
         <div className="mx-auto text-center">
-            <h2 className="text-xl font-bold leading-none text-gray-900 dark:text-white my-4"> Select Diner </h2>
-            <div className="flex flex-row">
+            <h2 className="text-xl font-bold leading-none text-gray-900 dark:text-white"> Select Diner </h2>
+            <div className="flex flex-row my-10">
                 {diners.map((d) => {
                     let dinerActive = d.id === selectedDiner.id;
                     return (
                         <div
+                            key={`diners-select-${d.id}`}
                             className={
                                 dinerActive
                                     ? 'mx-2 px-3 py-3 relative h-12 w-64 inline-flex items-center justify-center rounded border border-gray-200 cursor-pointer hover:bg-gray-50 border-blue-500 ring-1 ring-blue-500'
@@ -49,9 +50,9 @@ export function DinersSelectComponent({
                                 fill="currentColor"
                             >
                                 <path
-                                    fill-rule="evenodd"
+                                    fillRule="evenodd"
                                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                    clip-rule="evenodd"
+                                    clipRule="evenodd"
                                 />
                             </svg>
                         </div>

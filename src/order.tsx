@@ -77,16 +77,89 @@ class Order implements IOrder {
 function OrderSummaryComponent({ order }: { order: IOrder }) {
     let orderAmount = order.amount();
     let orderText = orderAmount ? `$ ${orderAmount}` : '-';
+    let quantities = new Map<Dish, number>();
+    let hasErrors = order.errors().length > 0;
+    order.diners.forEach((diner) => {
+        order.dishesAndQuantities(diner).forEach((quantity, dish) => {
+            let val = quantities.get(dish) || 0;
+            quantities.set(dish, val + quantity);
+        });
+    });
 
     return (
         <section className="p-8 m-3 bg-white rounded-lg border shadow-md mr-32">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold leading-none text-gray-900 dark:text-white">Order Summary</h3>
             </div>
-            {orderText}
-            {order.errors().map((err, idx) => (
-                <p key={`${idx}-err`}>{err}</p>
-            ))}
+            {hasErrors && (
+                <div className="p-4 text-red-700 border rounded border-red-900/10 bg-red-50" role="alert">
+                    <strong className="text-sm font-medium"> There are some issues with order </strong>
+
+                    <ul className="mt-1 ml-2 text-xs list-disc list-inside">
+                        {order.errors().map((err, idx) => (
+                            <li key={`${idx}-err`}>{err}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            <div className="my-5">
+                <table className="w-full text-sm divide-y-2 divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th className="px-4 py-2 font-bold text-xs text-left text-gray-500 whitespace-nowrap uppercase">
+                                Dish
+                            </th>
+                            <th className="px-4 py-2 font-bold text-xs text-gray-500 whitespace-nowrap text-center uppercase">
+                                Quantity
+                            </th>
+                            <th className="px-4 py-2 font-bold text-xs text-gray-500 whitespace-nowrap uppercase text-center">
+                                Total
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody className="divide-y divide-gray-200">
+                        {Array.from(quantities.keys()).map((dish: Dish) => {
+                            let q = quantities.get(dish)!;
+                            if (q <= 0) {
+                                return <></>;
+                            }
+                            return (
+                                <tr>
+                                    <td className="px-4 py-2 text-gray-800 font-medium whitespace-nowrap">
+                                        {dish.name}
+                                    </td>
+                                    <td className="px-4 py-2 text-gray-700 whitespace-nowrap text-center">
+                                        {q} x ${dish.price}
+                                    </td>
+                                    <td className="px-4 py-2 text-gray-700 whitespace-nowrap text-center">
+                                        $ {dish.price * q}
+                                    </td>
+                                </tr>
+                            );
+                        })}
+
+                        <tr>
+                            <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap"></td>
+                            <td className="px-4 py-2 text-gray-700 whitespace-nowrap text-center text-sm font-medium">
+                                Order Total
+                            </td>
+                            <td className="px-4 py-2 text-gray-700 whitespace-nowrap text-center text-sm font-bold">
+                                {orderText}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button
+                className="w-full bg-rose-800 rounded text-white inline-block px-12 py-3 text-medium cursor-pointer font-medium my-10 disabled:bg-slate-300 disabled:cursor-auto"
+                disabled={hasErrors}
+            >
+                {' '}
+                Place Order{' '}
+            </button>
         </section>
     );
 }
@@ -138,7 +211,7 @@ function validateEitherPrawnCockTailOrSalmonFillet(order: IOrder): string[] {
             }
         });
         if (dishNames.has('Salmon fillet') && dishNames.has('Prawn cocktail')) {
-            errors.push(`${diner.name} cannot haves Prawn cocktail and Salmon fillet in the same meal`);
+            errors.push(`${diner.name} cannot have Prawn cocktail and Salmon fillet in the same meal`);
         }
     });
     return errors;
@@ -150,11 +223,12 @@ function validateNoMoreThanOneCourseType(order: IOrder): string[] {
     order.diners.forEach((diner) => {
         let dishTypes = new Set();
         let dishesAndQuantities = order.dishesAndQuantities(diner);
+        let errorAppended = false;
         dishesAndQuantities.forEach((quantity, dish) => {
-            console.log(dishTypes, quantity, dish);
             if (quantity) {
                 if (dishTypes.has(dish.type)) {
-                    errors.push(`${diner.name} cannot haves more than one same course type`);
+                    !errorAppended && errors.push(`${diner.name} cannot have more than one same course type`);
+                    errorAppended = true;
                 }
                 dishTypes.add(dish.type);
             }

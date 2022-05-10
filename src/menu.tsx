@@ -31,9 +31,9 @@ const addStarterMutation = `mutation AddStarter($name: String!, $price: Float!) 
 function MenuComponent({ menu, addOrRemoveButtonGroup }: { menu: Menu; addOrRemoveButtonGroup: any }) {
     let groupedDishes = groupBy(menu.dishes, (c: Dish) => c.type);
     return (
-        <section className="p-8 bg-white m-3 rounded-lg border shadow-md ml-32">
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold leading-none text-gray-900 dark:text-white">Menu</h3>
+        <section className="my-12">
+            <div className=" justify-between items-center mb-4">
+                <h3 className="text-xl font-bold leading-none text-gray-900 dark:text-white text-center">Menu</h3>
             </div>
 
             <div className="flow-root">
@@ -41,11 +41,14 @@ function MenuComponent({ menu, addOrRemoveButtonGroup }: { menu: Menu; addOrRemo
                     {Object.keys(groupedDishes).map((key: string) => {
                         let dishes: Dish[] = groupedDishes[key];
                         return (
-                            <div className="divide-y divide-gray-200 dark:divide-gray-700 my-8">
+                            <div
+                                className="divide-y divide-gray-200 dark:divide-gray-700 my-8"
+                                key={`menu-group-${key}`}
+                            >
                                 <h2 className="uppercase font-bold text-gray-500 text-xs"> {key}</h2>
                                 {dishes.map((d) => {
                                     return (
-                                        <li className="py-3 sm:py-4">
+                                        <li className="py-3 sm:py-4" key={`menu-item-${d.id}`}>
                                             <div className="flex items-center space-x-4">
                                                 <div className="flex-shrink-0">
                                                     <img

@@ -21,15 +21,15 @@ export function TableService({ menu, diners, inventory }: { menu: Menu; diners: 
 
     return (
         <div className="container-sm mx-auto grid grid-cols-2 gap-4 justify-center">
-            <div className="col-span-2 place-self-center">
+            <div className="p-8 bg-white m-3 rounded-lg border shadow-md ml-32">
                 <DinersSelectComponent
                     diners={diners}
                     selectedDiner={selectedDiner}
                     setDiner={setDiner}
                 ></DinersSelectComponent>
+                <MenuComponent menu={menu} addOrRemoveButtonGroup={addOrRemoveButtonGroup}></MenuComponent>
             </div>
 
-            <MenuComponent menu={menu} addOrRemoveButtonGroup={addOrRemoveButtonGroup}></MenuComponent>
             <OrderSummaryComponent order={orderState.order}></OrderSummaryComponent>
         </div>
     );
