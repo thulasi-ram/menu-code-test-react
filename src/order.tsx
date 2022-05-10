@@ -126,7 +126,7 @@ function OrderSummaryComponent({ order }: { order: IOrder }) {
                                 return <></>;
                             }
                             return (
-                                <tr>
+                                <tr key={`order-summary-${dish.id}`}>
                                     <td className="px-4 py-2 text-gray-800 font-medium whitespace-nowrap">
                                         {dish.name}
                                     </td>
